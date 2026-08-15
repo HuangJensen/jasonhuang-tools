@@ -5,195 +5,135 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>JasonHuang的工具集</title>
 <style>
-  :root {
-    --ink: #0d0d0d;
-    --paper: #f2f0ea;
-    --orange: #ff4d00;
-  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
   body {
     font-family: "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
-    background: var(--paper);
-    color: var(--ink);
-    overflow-x: hidden;
+    background: #f2f0ea;
+    color: #0d0d0d;
   }
+  .topbar { height: 6px; background: #ff4d00; }
 
-  /* 背景：细网格 + 大圆 + 斜切黑带 */
-  .bg {
-    position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background-image:
-      linear-gradient(rgba(13,13,13,.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(13,13,13,.05) 1px, transparent 1px);
-    background-size: 48px 48px;
-  }
-  .bg .circle {
-    position: absolute; right: -160px; top: -160px;
-    width: 520px; height: 520px; border-radius: 50%;
-    border: 3px solid var(--ink); opacity: .9;
-  }
-  .bg .circle2 {
-    position: absolute; left: 38%; top: 18%;
-    width: 90px; height: 90px; background: var(--orange); opacity: .9;
-  }
-  .band {
-    position: fixed; z-index: 1; pointer-events: none;
-    top: -120px; right: -200px; width: 900px; height: 420px;
-    background: var(--ink);
-    transform: rotate(24deg);
-  }
+  .shell { display: flex; max-width: 1240px; margin: 0 auto; min-height: 100vh; }
 
-  .layout {
-    position: relative; z-index: 2;
-    display: flex; min-height: 100vh; max-width: 1240px; margin: 0 auto;
+  /* 左侧黑色作者栏 */
+  .side {
+    width: 290px; flex: 0 0 290px; background: #0d0d0d; color: #f2f0ea;
+    padding: 46px 34px; text-align: center;
   }
-
-  /* 左侧作者栏：黑色斜切面板 */
-  .author {
-    width: 300px; flex-shrink: 0;
-    background: var(--ink); color: var(--paper);
-    padding: 48px 36px;
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-    position: relative;
-    display: flex; flex-direction: column; justify-content: center;
-  }
-  .author::after {
-    content: ""; position: absolute; right: -18px; top: 0; bottom: 0; width: 18px;
-    background: var(--orange);
-  }
-  .mono {
-    width: 96px; height: 96px; border: 2px solid var(--paper);
+  .dia {
+    width: 92px; height: 92px; margin: 0 auto 30px;
+    border: 2px solid #f2f0ea;
     transform: rotate(45deg);
     display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 40px;
   }
-  .mono span { transform: rotate(-45deg); font-size: 30px; font-weight: 800; letter-spacing: 1px; }
-  .author .name { font-size: 24px; font-weight: 800; letter-spacing: 3px; text-align: center; }
-  .author .sub { text-align: center; font-size: 11px; letter-spacing: 4px; color: rgba(242,240,234,.55); margin-top: 8px; }
-  .author .rule { height: 2px; background: var(--orange); width: 60px; margin: 26px auto; }
-  .quote { font-size: 14px; line-height: 2; text-align: center; letter-spacing: 1px; color: rgba(242,240,234,.9); }
-  .quote b { color: var(--orange); font-weight: 700; }
+  .dia span { transform: rotate(-45deg); font-size: 28px; font-weight: 800; }
+  .who { font-size: 22px; font-weight: 800; letter-spacing: 3px; }
+  .who-sub { font-size: 10px; letter-spacing: 4px; color: rgba(242,240,234,.5); margin-top: 8px; }
+  .rule { width: 56px; height: 2px; background: #ff4d00; margin: 26px auto; }
+  .q { font-size: 14px; line-height: 2; letter-spacing: 1px; }
+  .q b { color: #ff4d00; }
 
-  /* 右侧主区 */
-  .content { flex: 1; padding: 56px 56px 72px; }
+  /* 右侧 */
+  .main { flex: 1; padding: 46px 48px 60px; }
+  .marks { margin-bottom: 26px; }
+  .marks .sq { display: inline-block; width: 14px; height: 14px; background: #0d0d0d; margin-right: 8px; }
+  .marks .cir { display: inline-block; width: 14px; height: 14px; border: 3px solid #ff4d00; border-radius: 50%; margin-right: 8px; vertical-align: middle; }
+  .marks .tri { display: inline-block; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 14px solid #ff4d00; margin-right: 8px; vertical-align: middle; }
+  .marks .cross { display: inline-block; width: 16px; height: 16px; position: relative; vertical-align: middle; }
+  .marks .cross::before, .marks .cross::after { content: ""; position: absolute; background: #0d0d0d; }
+  .marks .cross::before { left: 50%; top: 0; width: 2px; height: 100%; margin-left: -1px; }
+  .marks .cross::after { top: 50%; left: 0; height: 2px; width: 100%; margin-top: -1px; }
 
-  .hero { position: relative; padding: 20px 0 10px; }
-  .kicker {
-    display: inline-block; font-size: 11px; letter-spacing: 5px; font-weight: 700;
-    border: 2px solid var(--ink); padding: 5px 12px; margin-bottom: 18px;
-  }
-  .big {
-    font-size: clamp(56px, 9vw, 118px);
-    font-weight: 900; line-height: .92; letter-spacing: -4px;
-    text-transform: uppercase;
-  }
-  .big .accent { color: var(--orange); }
-  .badge {
-    display: inline-block; margin-top: 22px;
-    background: var(--ink); color: var(--paper);
-    font-size: 13px; letter-spacing: 3px; padding: 8px 18px;
-  }
-  .badge::before { content: "■ "; color: var(--orange); }
+  .kick { font-size: 11px; font-weight: 700; letter-spacing: 4px; }
+  .title { font-size: 88px; font-weight: 900; line-height: 1.02; letter-spacing: -2px; margin: 10px 0 0; }
+  .title .a { color: #ff4d00; }
+  .badge { display: inline-block; margin-top: 24px; background: #0d0d0d; color: #f2f0ea; font-size: 13px; letter-spacing: 3px; padding: 8px 18px; }
 
-  .grp { margin-top: 52px; }
-  .grp-head {
-    display: flex; align-items: baseline; gap: 16px;
-    border-bottom: 3px solid var(--ink); padding-bottom: 10px;
-  }
-  .grp-head .num { font-size: 26px; font-weight: 900; color: var(--orange); }
-  .grp-head h2 { font-size: 26px; font-weight: 800; letter-spacing: 6px; }
-  .grp-head .en { font-size: 11px; letter-spacing: 4px; color: rgba(13,13,13,.45); font-weight: 700; }
+  .group { margin-top: 48px; }
+  .ghead { border-bottom: 3px solid #0d0d0d; padding-bottom: 10px; font-size: 22px; font-weight: 800; letter-spacing: 4px; }
+  .ghead .num { color: #ff4d00; font-weight: 900; margin-right: 10px; }
+  .ghead .en { font-size: 11px; letter-spacing: 4px; color: rgba(13,13,13,.45); margin-left: 12px; font-weight: 700; }
 
-  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; margin-top: 24px; }
-  .tile {
-    position: relative; display: block; text-decoration: none; color: var(--ink);
-    background: transparent; border: 2px solid var(--ink);
-    padding: 26px 24px 24px;
-    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
+  .blocks { margin-top: 22px; }
+  .block {
+    display: block; text-decoration: none; color: #0d0d0d;
+    border: 3px solid #0d0d0d; background: #f2f0ea;
+    padding: 24px 26px 22px; margin-bottom: 16px; max-width: 640px;
     transition: background .15s ease, color .15s ease;
   }
-  .tile .idx {
-    position: absolute; top: 14px; right: 18px;
-    font-size: 13px; font-weight: 800; letter-spacing: 1px;
-  }
-  .tile h3 { font-size: 22px; font-weight: 800; letter-spacing: 1px; }
-  .tile p { margin-top: 10px; font-size: 13px; line-height: 1.7; color: rgba(13,13,13,.6); }
-  .tile .go { display: inline-block; margin-top: 16px; font-weight: 800; font-size: 13px; letter-spacing: 1px; }
-  .tile .go::after { content: " →"; }
-  .tile:hover { background: var(--ink); color: var(--paper); }
-  .tile:hover p { color: rgba(242,240,234,.65); }
-  .tile:hover .idx { color: var(--orange); }
-  .tile:hover .go::after { color: var(--orange); }
+  .block .tag { display: inline-block; background: #0d0d0d; color: #f2f0ea; font-size: 12px; font-weight: 800; padding: 2px 10px; margin-bottom: 12px; }
+  .block h3 { font-size: 24px; font-weight: 800; letter-spacing: 1px; }
+  .block p { margin-top: 8px; font-size: 13px; line-height: 1.7; color: rgba(13,13,13,.6); }
+  .block .go { display: inline-block; margin-top: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; }
+  .block .go em { font-style: normal; color: #ff4d00; }
+  .block:hover { background: #0d0d0d; color: #f2f0ea; }
+  .block:hover p { color: rgba(242,240,234,.6); }
+  .block:hover .tag { background: #ff4d00; }
 
-  footer { margin-top: 56px; padding-top: 18px; border-top: 2px solid var(--ink); display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 2px; color: rgba(13,13,13,.5); }
+  .foot { margin-top: 50px; border-top: 2px solid #0d0d0d; padding-top: 14px; font-size: 10px; letter-spacing: 2px; color: rgba(13,13,13,.5); display: flex; justify-content: space-between; }
 
-  @media (max-width: 900px) {
-    .layout { flex-direction: column; }
-    .author { width: 100%; padding: 32px 24px; flex-direction: row; align-items: center; gap: 20px; flex-wrap: wrap; }
-    .author::after { display: none; }
-    .mono { margin: 0; width: 64px; height: 64px; }
-    .mono span { font-size: 20px; }
-    .author .name { font-size: 20px; }
-    .author .rule { margin: 0 8px; }
-    .quote { text-align: left; flex: 1; min-width: 200px; font-size: 13px; }
-    .content { padding: 36px 20px 56px; }
-    .band { display: none; }
+  @media (max-width: 860px) {
+    .shell { flex-direction: column; }
+    .side { width: 100%; flex: none; padding: 30px 20px; }
+    .dia { margin: 0 auto 20px; width: 68px; height: 68px; }
+    .dia span { font-size: 20px; }
+    .q { font-size: 13px; }
+    .main { padding: 30px 18px 48px; }
+    .title { font-size: 52px; }
+    .foot { flex-direction: column; }
   }
 </style>
 </head>
 <body>
-<div class="bg"><div class="circle"></div><div class="circle2"></div></div>
-<div class="band"></div>
-
-<div class="layout">
-  <aside class="author">
-    <div class="mono"><span>JH</span></div>
-    <div>
-      <div class="name">JASONHUANG</div>
-      <div class="sub">TOOL MAKER</div>
-    </div>
+<div class="topbar"></div>
+<div class="shell">
+  <aside class="side">
+    <div class="dia"><span>JH</span></div>
+    <h2 class="who">JASONHUANG</h2>
+    <div class="who-sub">TOOL MAKER</div>
     <div class="rule"></div>
-    <p class="quote">工具在手，边界在后。<br/>每多一种工具，<br/>你就<b>多一分自由</b>。</p>
+    <p class="q">工具在手，边界在后。<br/>每多一种工具，<br/>你就<b>多一分自由</b>。</p>
   </aside>
 
-  <main class="content">
-    <header class="hero">
-      <span class="kicker">JASONHUANG&rsquo;S TOOLKIT / 2026</span>
-      <h1 class="big">工<span class="accent">具</span>集</h1>
-      <span class="badge">JasonHuang 出品</span>
-    </header>
+  <main class="main">
+    <div class="marks">
+      <span class="sq"></span><span class="cir"></span><span class="tri"></span><span class="cross"></span>
+      <span class="kick">JASONHUANG&rsquo;S TOOLKIT / 2026</span>
+    </div>
+    <h1 class="title">工<span class="a">具</span>集</h1>
+    <span class="badge">JasonHuang 出品</span>
 
-    <section class="grp">
-      <div class="grp-head"><span class="num">01</span><h2>英语</h2><span class="en">ENGLISH</span></div>
-      <div class="tiles">
-        <a class="tile" href="https://dictionary-gpt.pages.dev" target="_blank" rel="noopener">
-          <span class="idx">A</span>
+    <section class="group">
+      <div class="ghead"><span class="num">01</span>英语<span class="en">ENGLISH</span></div>
+      <div class="blocks">
+        <a class="block" href="https://dictionary-gpt.pages.dev" target="_blank" rel="noopener">
+          <span class="tag">A</span>
           <h3>在线词典</h3>
           <p>76 万词条 / 音标 / 词性 / 考试标签 / 词形变化，浏览器本地快速搜索</p>
-          <span class="go">打开工具</span>
+          <span class="go">打开工具 <em>→</em></span>
         </a>
-        <a class="tile" href="https://english-learning-456.pages.dev" target="_blank" rel="noopener">
-          <span class="idx">B</span>
+        <a class="block" href="https://english-learning-456.pages.dev" target="_blank" rel="noopener">
+          <span class="tag">B</span>
           <h3>英语学习</h3>
           <p>语法 / 好句与作文模板 / 背诵 + 应用</p>
-          <span class="go">打开工具</span>
+          <span class="go">打开工具 <em>→</em></span>
         </a>
       </div>
     </section>
 
-    <section class="grp">
-      <div class="grp-head"><span class="num">02</span><h2>数学</h2><span class="en">MATH</span></div>
-      <div class="tiles">
-        <a class="tile" href="https://math-visualizer.pages.dev" target="_blank" rel="noopener">
-          <span class="idx">C</span>
+    <section class="group">
+      <div class="ghead"><span class="num">02</span>数学<span class="en">MATH</span></div>
+      <div class="blocks">
+        <a class="block" href="https://math-visualizer.pages.dev" target="_blank" rel="noopener">
+          <span class="tag">C</span>
           <h3>数学可视化</h3>
           <p>线性代数 / 微积分可视化：矩阵、特征向量、傅里叶、泰勒、积分</p>
-          <span class="go">打开工具</span>
+          <span class="go">打开工具 <em>→</em></span>
         </a>
       </div>
     </section>
 
-    <footer>
+    <footer class="foot">
       <span>JASONHUANG TOOLS</span>
       <span>TOOLS IN HAND, BOUNDARY BEHIND</span>
     </footer>
@@ -201,3 +141,5 @@
 </div>
 </body>
 </html>
+
+
