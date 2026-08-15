@@ -5,183 +5,200 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>JasonHuang的工具集</title>
 <style>
+  :root {
+    --bg: #05060a;
+    --panel: rgba(255,255,255,.025);
+    --line: rgba(255,255,255,.09);
+    --line-soft: rgba(255,255,255,.05);
+    --txt: #eef2f8;
+    --muted: rgba(238,242,248,.5);
+    --faint: rgba(238,242,248,.28);
+    --acc: #6ea8ff;
+    --acc-soft: rgba(110,168,255,.35);
+  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
   body {
     font-family: "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
-    background: #04070d;
-    color: #e8edf5;
-    min-height: 100vh;
-    overflow-x: hidden;
+    background: var(--bg); color: var(--txt);
+    min-height: 100vh; overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* 深空背景：星云 + 星光 */
-  .space {
+  /* 背景层：基础光 + 细网格 + 暗角 + 噪点 */
+  .bg {
     position: fixed; inset: 0; z-index: 0; pointer-events: none;
     background:
-      radial-gradient(1200px 800px at 85% -10%, rgba(124,92,255,.16), transparent 60%),
-      radial-gradient(1000px 700px at -10% 30%, rgba(0,229,255,.10), transparent 60%),
-      radial-gradient(900px 700px at 50% 120%, rgba(56,90,255,.12), transparent 60%),
-      #04070d;
+      radial-gradient(900px 620px at 78% -12%, rgba(80,120,255,.10), transparent 62%),
+      radial-gradient(700px 520px at -8% 24%, rgba(110,168,255,.06), transparent 60%),
+      var(--bg);
   }
-  .stars {
-    position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .8;
+  .grid {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .55;
     background-image:
-      radial-gradient(1px 1px at 25px 45px, rgba(255,255,255,.8), transparent),
-      radial-gradient(1px 1px at 120px 90px, rgba(255,255,255,.5), transparent),
-      radial-gradient(1.5px 1.5px at 210px 30px, rgba(255,255,255,.7), transparent),
-      radial-gradient(1px 1px at 300px 150px, rgba(255,255,255,.4), transparent),
-      radial-gradient(1px 1px at 60px 200px, rgba(0,229,255,.6), transparent),
-      radial-gradient(1.5px 1.5px at 180px 260px, rgba(255,255,255,.6), transparent),
-      radial-gradient(1px 1px at 90px 320px, rgba(255,255,255,.5), transparent),
-      radial-gradient(1px 1px at 260px 120px, rgba(124,92,255,.6), transparent);
-    background-size: 340px 380px;
+      linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px);
+    background-size: 72px 72px;
+  }
+  .vig {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(0,0,0,.55) 100%);
+  }
+  .noise {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  .wrap { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; padding: 0 24px; }
+  .wrap { position: relative; z-index: 2; max-width: 1060px; margin: 0 auto; padding: 0 30px 40px 74px; }
 
-  /* 顶部品牌栏 */
-  header.nav {
+  /* 左侧状态轨 */
+  .rail {
+    position: fixed; left: 26px; top: 0; bottom: 0; z-index: 2;
+    width: 1px; background: var(--line-soft);
+  }
+  .rail::before { content: ""; position: absolute; top: 0; left: -2px; width: 5px; height: 5px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 12px var(--acc); }
+  .rail::after { content: ""; position: absolute; bottom: 0; left: -1px; width: 3px; height: 120px; background: linear-gradient(transparent, var(--acc-soft)); }
+  .rail .tag { position: absolute; left: 14px; top: 26px; font-size: 9px; letter-spacing: 3px; color: var(--faint); white-space: nowrap; }
+  .rail .tag2 { position: absolute; left: 14px; bottom: 26px; font-size: 9px; letter-spacing: 3px; color: var(--faint); white-space: nowrap; }
+
+  /* 顶部导航 */
+  nav {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 26px 0;
+    padding: 30px 0 0; position: relative;
   }
-  .brand { display: flex; align-items: center; gap: 12px; }
-  .orb {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: linear-gradient(135deg, #00e5ff, #7c5cff);
-    box-shadow: 0 0 18px rgba(0,229,255,.45);
-    display: flex; align-items: center; justify-content: center;
-    color: #04070d; font-weight: 800; font-size: 14px;
+  .brand { font-size: 16px; font-weight: 300; letter-spacing: 6px; }
+  .brand b { font-weight: 600; }
+  .made {
+    font-size: 11px; letter-spacing: 3px; color: var(--muted);
+    border: 1px solid var(--line); padding: 6px 14px; border-radius: 2px;
   }
-  .wordmark { font-size: 17px; font-weight: 700; letter-spacing: 4px; color: #fff; }
-  .pill {
-    font-size: 12px; letter-spacing: 2px; color: #bfe9ff;
-    border: 1px solid rgba(0,229,255,.4);
-    border-radius: 999px; padding: 7px 16px;
-    background: rgba(0,229,255,.06);
-    box-shadow: 0 0 14px rgba(0,229,255,.12) inset;
-  }
+  .made i { font-style: normal; color: var(--acc); }
 
   /* 英雄区 */
-  .hero { text-align: center; padding: 70px 0 30px; }
-  .kicker { font-size: 12px; letter-spacing: 6px; color: #00e5ff; text-transform: uppercase; }
+  .hero { padding: 96px 0 40px; position: relative; }
+  .annot { font-size: 10px; letter-spacing: 5px; color: var(--faint); text-transform: uppercase; }
+  .annot em { font-style: normal; color: var(--acc); }
   .title {
-    margin-top: 18px;
-    font-size: clamp(56px, 10vw, 108px);
-    font-weight: 200; letter-spacing: 10px; line-height: 1.05;
-    background: linear-gradient(180deg, #ffffff 0%, #9db4ff 100%);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin-top: 26px;
+    font-size: clamp(64px, 11vw, 132px);
+    font-weight: 100; letter-spacing: 14px; line-height: 1.02;
+    color: #f5f7fc;
+    text-shadow: 0 0 60px rgba(110,168,255,.12);
   }
-  .title em { font-style: normal; background: linear-gradient(90deg, #00e5ff, #7c5cff); -webkit-background-clip: text; background-clip: text; }
-  .tagline { margin-top: 20px; font-size: 14px; letter-spacing: 2px; color: rgba(232,237,245,.55); }
-  .tagline b { color: #7ee8ff; font-weight: 600; }
-  .divider { width: 64px; height: 2px; margin: 26px auto 0; background: linear-gradient(90deg, transparent, #00e5ff, transparent); }
+  .tagline { margin-top: 30px; font-size: 14px; letter-spacing: 2px; color: var(--muted); line-height: 2; }
+  .tagline b { color: var(--txt); font-weight: 500; }
+
+  /* 轨道元素：藏在标题后面的圆弧 */
+  .orbit { position: absolute; right: -140px; top: -60px; width: 460px; height: 460px; border: 1px solid var(--line-soft); border-radius: 50%; pointer-events: none; }
+  .orbit::before { content: ""; position: absolute; top: 38px; left: 34px; width: 6px; height: 6px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 14px var(--acc); }
+  .orbit::after { content: ""; position: absolute; right: -1px; bottom: 120px; width: 120px; height: 1px; background: linear-gradient(90deg, transparent, var(--acc-soft)); }
 
   /* 板块 */
-  .group { margin-top: 54px; }
-  .ghead { display: flex; align-items: center; margin-bottom: 18px; }
-  .ghead .num { font-size: 13px; letter-spacing: 2px; color: #00e5ff; font-weight: 700; margin-right: 14px; }
-  .ghead h2 { font-size: 18px; letter-spacing: 6px; color: #fff; font-weight: 600; }
-  .ghead .en { font-size: 11px; letter-spacing: 3px; color: rgba(232,237,245,.4); margin-left: 14px; }
-  .ghead .line { flex: 1; height: 1px; margin-left: 18px; background: linear-gradient(90deg, rgba(255,255,255,.18), transparent); }
+  .group { margin-top: 56px; position: relative; }
+  .ghead { display: flex; align-items: baseline; gap: 16px; }
+  .ghead .num { font-size: 11px; letter-spacing: 3px; color: var(--acc); font-weight: 600; }
+  .ghead h2 { font-size: 21px; font-weight: 300; letter-spacing: 8px; color: var(--txt); }
+  .ghead .en { font-size: 10px; letter-spacing: 4px; color: var(--faint); }
+  .ghead .rule { flex: 1; height: 1px; background: var(--line); }
 
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
-  .card {
-    position: relative; display: block; text-decoration: none; color: #e8edf5;
-    background: rgba(255,255,255,.045);
-    border: 1px solid rgba(255,255,255,.10);
-    border-radius: 18px;
-    padding: 30px 28px 26px;
-    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease, background .25s ease;
+  .modules { margin-top: 10px; border-top: 1px solid var(--line-soft); }
+  .module {
+    position: relative; display: flex; align-items: center; gap: 26px;
+    padding: 30px 12px; text-decoration: none; color: var(--txt);
+    border-bottom: 1px solid var(--line-soft);
+    transition: background .25s ease, padding .25s ease;
   }
-  .card::before {
-    content: ""; position: absolute; top: 0; left: 22px; right: 22px; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(0,229,255,.7), transparent);
-    opacity: 0; transition: opacity .25s ease;
-  }
-  .card:hover { transform: translateY(-6px); border-color: rgba(0,229,255,.45); box-shadow: 0 12px 40px rgba(0,229,255,.12), 0 0 60px rgba(124,92,255,.10); background: rgba(255,255,255,.07); }
-  .card:hover::before { opacity: 1; }
-  .mono {
-    width: 46px; height: 46px; border-radius: 12px;
-    background: linear-gradient(135deg, rgba(0,229,255,.9), rgba(124,92,255,.9));
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 17px; color: #04070d;
-    box-shadow: 0 0 18px rgba(0,229,255,.25);
-    margin-bottom: 18px;
-  }
-  .card h3 { font-size: 20px; font-weight: 600; letter-spacing: 1px; color: #fff; }
-  .card p { margin-top: 10px; font-size: 13px; line-height: 1.8; color: rgba(232,237,245,.55); }
-  .card .go { display: inline-block; margin-top: 18px; font-size: 13px; letter-spacing: 2px; color: #7ee8ff; }
-  .card .go::after { content: " →"; color: #00e5ff; }
+  .module .mi { font-size: 12px; letter-spacing: 2px; color: var(--faint); width: 34px; }
+  .module .mc { flex: 1; }
+  .module h3 { font-size: 24px; font-weight: 300; letter-spacing: 3px; transition: letter-spacing .25s ease, color .25s ease; }
+  .module p { margin-top: 8px; font-size: 13px; letter-spacing: 1px; color: var(--muted); line-height: 1.7; }
+  .module .ar { font-size: 18px; color: var(--faint); transition: transform .25s ease, color .25s ease; }
+  .module .beam { position: absolute; left: 0; top: 50%; width: 0; height: 1px; background: linear-gradient(90deg, var(--acc), transparent); transition: width .3s ease; }
+  .module:hover { background: linear-gradient(90deg, rgba(110,168,255,.05), transparent); padding-left: 20px; }
+  .module:hover h3 { letter-spacing: 5px; color: #fff; }
+  .module:hover .ar { transform: translateX(6px); color: var(--acc); }
+  .module:hover .mi { color: var(--acc); }
+  .module:hover .beam { width: 46px; }
 
   /* 页脚 */
-  footer { text-align: center; padding: 60px 0 46px; }
-  .quote { font-size: 15px; letter-spacing: 2px; color: rgba(232,237,245,.75); line-height: 2; }
-  .quote b { background: linear-gradient(90deg,#00e5ff,#7c5cff); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }
-  .foot-line { margin: 22px auto 0; width: 40px; height: 1px; background: rgba(255,255,255,.25); }
-  .copy { margin-top: 14px; font-size: 11px; letter-spacing: 3px; color: rgba(232,237,245,.35); }
+  footer { margin-top: 70px; padding-top: 30px; border-top: 1px solid var(--line-soft); text-align: center; }
+  .quote { font-size: 15px; letter-spacing: 3px; color: var(--txt); font-weight: 300; line-height: 2.1; }
+  .quote b { color: var(--acc); font-weight: 500; }
+  .copy { margin-top: 18px; font-size: 10px; letter-spacing: 3px; color: var(--faint); }
 
-  @media (max-width: 640px) {
-    .hero { padding: 46px 0 18px; }
-    .title { letter-spacing: 4px; }
-    .cards { grid-template-columns: 1fr; }
+  @media (max-width: 820px) {
+    .wrap { padding: 0 20px 40px; }
+    .rail { display: none; }
+    .hero { padding: 56px 0 26px; }
+    .title { letter-spacing: 6px; }
+    .orbit { display: none; }
+    .module { flex-wrap: wrap; gap: 10px; }
+    .module .ar { display: none; }
   }
 </style>
 </head>
 <body>
-<div class="space"></div>
-<div class="stars"></div>
+<div class="bg"></div>
+<div class="grid"></div>
+<div class="vig"></div>
+<div class="noise"></div>
+
+<div class="rail"><span class="tag">SYS / ONLINE</span><span class="tag2">JASONHUANG&rsquo;S TOOLKIT</span></div>
 
 <div class="wrap">
-  <header class="nav">
-    <div class="brand">
-      <span class="orb">JH</span>
-      <span class="wordmark">JASONHUANG</span>
-    </div>
-    <span class="pill">JasonHuang 出品</span>
-  </header>
+  <nav>
+    <div class="brand">JASON<b>HUANG</b></div>
+    <span class="made">JasonHuang <i>出品</i></span>
+  </nav>
 
   <section class="hero">
-    <div class="kicker">JasonHuang&rsquo;s Toolkit</div>
-    <h1 class="title">工具<em>集</em></h1>
-    <p class="tagline">工具在手，边界在后。每多一种工具，<b>你就多一分自由</b>。</p>
-    <div class="divider"></div>
+    <div class="annot">JASONHUANG TOOLKIT <em>/</em> 2026</div>
+    <h1 class="title">工具集</h1>
+    <p class="tagline">工具在手，边界在后。<br/>每多一种工具，<b>你就多一分自由</b>。</p>
+    <div class="orbit"></div>
   </section>
 
   <section class="group">
-    <div class="ghead"><span class="num">01</span><h2>英语</h2><span class="en">ENGLISH</span><span class="line"></span></div>
-    <div class="cards">
-      <a class="card" href="https://dictionary-gpt.pages.dev" target="_blank" rel="noopener">
-        <span class="mono">A</span>
-        <h3>在线词典</h3>
-        <p>76 万词条 / 音标 / 词性 / 考试标签 / 词形变化，浏览器本地快速搜索</p>
-        <span class="go">进入工具</span>
+    <div class="ghead"><span class="num">01</span><h2>英语</h2><span class="en">ENGLISH</span><span class="rule"></span></div>
+    <div class="modules">
+      <a class="module" href="https://dictionary-gpt.pages.dev" target="_blank" rel="noopener">
+        <span class="beam"></span>
+        <span class="mi">A</span>
+        <div class="mc">
+          <h3>在线词典</h3>
+          <p>76 万词条 / 音标 / 词性 / 考试标签 / 词形变化，浏览器本地快速搜索</p>
+        </div>
+        <span class="ar">&rarr;</span>
       </a>
-      <a class="card" href="https://english-learning-456.pages.dev" target="_blank" rel="noopener">
-        <span class="mono">B</span>
-        <h3>英语学习</h3>
-        <p>语法 / 好句与作文模板 / 背诵 + 应用</p>
-        <span class="go">进入工具</span>
+      <a class="module" href="https://english-learning-456.pages.dev" target="_blank" rel="noopener">
+        <span class="beam"></span>
+        <span class="mi">B</span>
+        <div class="mc">
+          <h3>英语学习</h3>
+          <p>语法 / 好句与作文模板 / 背诵 + 应用</p>
+        </div>
+        <span class="ar">&rarr;</span>
       </a>
     </div>
   </section>
 
   <section class="group">
-    <div class="ghead"><span class="num">02</span><h2>数学</h2><span class="en">MATH</span><span class="line"></span></div>
-    <div class="cards">
-      <a class="card" href="https://math-visualizer.pages.dev" target="_blank" rel="noopener">
-        <span class="mono">C</span>
-        <h3>数学可视化</h3>
-        <p>线性代数 / 微积分可视化：矩阵、特征向量、傅里叶、泰勒、积分</p>
-        <span class="go">进入工具</span>
+    <div class="ghead"><span class="num">02</span><h2>数学</h2><span class="en">MATH</span><span class="rule"></span></div>
+    <div class="modules">
+      <a class="module" href="https://math-visualizer.pages.dev" target="_blank" rel="noopener">
+        <span class="beam"></span>
+        <span class="mi">C</span>
+        <div class="mc">
+          <h3>数学可视化</h3>
+          <p>线性代数 / 微积分可视化：矩阵、特征向量、傅里叶、泰勒、积分</p>
+        </div>
+        <span class="ar">&rarr;</span>
       </a>
     </div>
   </section>
 
   <footer>
     <p class="quote">工具在手，边界在后。<br/>每多一种工具，<b>你就多一分自由</b>。</p>
-    <div class="foot-line"></div>
     <p class="copy">JASONHUANG TOOLS &middot; TOOLS IN HAND, BOUNDARY BEHIND</p>
   </footer>
 </div>
