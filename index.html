@@ -6,140 +6,184 @@
 <title>JasonHuang的工具集</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
   body {
     font-family: "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
-    background: #f2f0ea;
-    color: #0d0d0d;
+    background: #04070d;
+    color: #e8edf5;
+    min-height: 100vh;
+    overflow-x: hidden;
   }
-  .topbar { height: 6px; background: #ff4d00; }
 
-  .shell { display: flex; max-width: 1240px; margin: 0 auto; min-height: 100vh; }
-
-  /* 左侧黑色作者栏 */
-  .side {
-    width: 290px; flex: 0 0 290px; background: #0d0d0d; color: #f2f0ea;
-    padding: 46px 34px; text-align: center;
+  /* 深空背景：星云 + 星光 */
+  .space {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(1200px 800px at 85% -10%, rgba(124,92,255,.16), transparent 60%),
+      radial-gradient(1000px 700px at -10% 30%, rgba(0,229,255,.10), transparent 60%),
+      radial-gradient(900px 700px at 50% 120%, rgba(56,90,255,.12), transparent 60%),
+      #04070d;
   }
-  .dia {
-    width: 92px; height: 92px; margin: 0 auto 30px;
-    border: 2px solid #f2f0ea;
-    transform: rotate(45deg);
+  .stars {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .8;
+    background-image:
+      radial-gradient(1px 1px at 25px 45px, rgba(255,255,255,.8), transparent),
+      radial-gradient(1px 1px at 120px 90px, rgba(255,255,255,.5), transparent),
+      radial-gradient(1.5px 1.5px at 210px 30px, rgba(255,255,255,.7), transparent),
+      radial-gradient(1px 1px at 300px 150px, rgba(255,255,255,.4), transparent),
+      radial-gradient(1px 1px at 60px 200px, rgba(0,229,255,.6), transparent),
+      radial-gradient(1.5px 1.5px at 180px 260px, rgba(255,255,255,.6), transparent),
+      radial-gradient(1px 1px at 90px 320px, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 260px 120px, rgba(124,92,255,.6), transparent);
+    background-size: 340px 380px;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+  /* 顶部品牌栏 */
+  header.nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 26px 0;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .orb {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, #00e5ff, #7c5cff);
+    box-shadow: 0 0 18px rgba(0,229,255,.45);
     display: flex; align-items: center; justify-content: center;
+    color: #04070d; font-weight: 800; font-size: 14px;
   }
-  .dia span { transform: rotate(-45deg); font-size: 28px; font-weight: 800; }
-  .who { font-size: 22px; font-weight: 800; letter-spacing: 3px; }
-  .who-sub { font-size: 10px; letter-spacing: 4px; color: rgba(242,240,234,.5); margin-top: 8px; }
-  .rule { width: 56px; height: 2px; background: #ff4d00; margin: 26px auto; }
-  .q { font-size: 14px; line-height: 2; letter-spacing: 1px; }
-  .q b { color: #ff4d00; }
-
-  /* 右侧 */
-  .main { flex: 1; padding: 46px 48px 60px; }
-  .marks { margin-bottom: 26px; }
-  .marks .sq { display: inline-block; width: 14px; height: 14px; background: #0d0d0d; margin-right: 8px; }
-  .marks .cir { display: inline-block; width: 14px; height: 14px; border: 3px solid #ff4d00; border-radius: 50%; margin-right: 8px; vertical-align: middle; }
-  .marks .tri { display: inline-block; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 14px solid #ff4d00; margin-right: 8px; vertical-align: middle; }
-  .marks .cross { display: inline-block; width: 16px; height: 16px; position: relative; vertical-align: middle; }
-  .marks .cross::before, .marks .cross::after { content: ""; position: absolute; background: #0d0d0d; }
-  .marks .cross::before { left: 50%; top: 0; width: 2px; height: 100%; margin-left: -1px; }
-  .marks .cross::after { top: 50%; left: 0; height: 2px; width: 100%; margin-top: -1px; }
-
-  .kick { font-size: 11px; font-weight: 700; letter-spacing: 4px; }
-  .title { font-size: 88px; font-weight: 900; line-height: 1.02; letter-spacing: -2px; margin: 10px 0 0; }
-  .title .a { color: #ff4d00; }
-  .badge { display: inline-block; margin-top: 24px; background: #0d0d0d; color: #f2f0ea; font-size: 13px; letter-spacing: 3px; padding: 8px 18px; }
-
-  .group { margin-top: 48px; }
-  .ghead { border-bottom: 3px solid #0d0d0d; padding-bottom: 10px; font-size: 22px; font-weight: 800; letter-spacing: 4px; }
-  .ghead .num { color: #ff4d00; font-weight: 900; margin-right: 10px; }
-  .ghead .en { font-size: 11px; letter-spacing: 4px; color: rgba(13,13,13,.45); margin-left: 12px; font-weight: 700; }
-
-  .blocks { margin-top: 22px; }
-  .block {
-    display: block; text-decoration: none; color: #0d0d0d;
-    border: 3px solid #0d0d0d; background: #f2f0ea;
-    padding: 24px 26px 22px; margin-bottom: 16px; max-width: 640px;
-    transition: background .15s ease, color .15s ease;
+  .wordmark { font-size: 17px; font-weight: 700; letter-spacing: 4px; color: #fff; }
+  .pill {
+    font-size: 12px; letter-spacing: 2px; color: #bfe9ff;
+    border: 1px solid rgba(0,229,255,.4);
+    border-radius: 999px; padding: 7px 16px;
+    background: rgba(0,229,255,.06);
+    box-shadow: 0 0 14px rgba(0,229,255,.12) inset;
   }
-  .block .tag { display: inline-block; background: #0d0d0d; color: #f2f0ea; font-size: 12px; font-weight: 800; padding: 2px 10px; margin-bottom: 12px; }
-  .block h3 { font-size: 24px; font-weight: 800; letter-spacing: 1px; }
-  .block p { margin-top: 8px; font-size: 13px; line-height: 1.7; color: rgba(13,13,13,.6); }
-  .block .go { display: inline-block; margin-top: 14px; font-size: 13px; font-weight: 800; letter-spacing: 1px; }
-  .block .go em { font-style: normal; color: #ff4d00; }
-  .block:hover { background: #0d0d0d; color: #f2f0ea; }
-  .block:hover p { color: rgba(242,240,234,.6); }
-  .block:hover .tag { background: #ff4d00; }
 
-  .foot { margin-top: 50px; border-top: 2px solid #0d0d0d; padding-top: 14px; font-size: 10px; letter-spacing: 2px; color: rgba(13,13,13,.5); display: flex; justify-content: space-between; }
+  /* 英雄区 */
+  .hero { text-align: center; padding: 70px 0 30px; }
+  .kicker { font-size: 12px; letter-spacing: 6px; color: #00e5ff; text-transform: uppercase; }
+  .title {
+    margin-top: 18px;
+    font-size: clamp(56px, 10vw, 108px);
+    font-weight: 200; letter-spacing: 10px; line-height: 1.05;
+    background: linear-gradient(180deg, #ffffff 0%, #9db4ff 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .title em { font-style: normal; background: linear-gradient(90deg, #00e5ff, #7c5cff); -webkit-background-clip: text; background-clip: text; }
+  .tagline { margin-top: 20px; font-size: 14px; letter-spacing: 2px; color: rgba(232,237,245,.55); }
+  .tagline b { color: #7ee8ff; font-weight: 600; }
+  .divider { width: 64px; height: 2px; margin: 26px auto 0; background: linear-gradient(90deg, transparent, #00e5ff, transparent); }
 
-  @media (max-width: 860px) {
-    .shell { flex-direction: column; }
-    .side { width: 100%; flex: none; padding: 30px 20px; }
-    .dia { margin: 0 auto 20px; width: 68px; height: 68px; }
-    .dia span { font-size: 20px; }
-    .q { font-size: 13px; }
-    .main { padding: 30px 18px 48px; }
-    .title { font-size: 52px; }
-    .foot { flex-direction: column; }
+  /* 板块 */
+  .group { margin-top: 54px; }
+  .ghead { display: flex; align-items: center; margin-bottom: 18px; }
+  .ghead .num { font-size: 13px; letter-spacing: 2px; color: #00e5ff; font-weight: 700; margin-right: 14px; }
+  .ghead h2 { font-size: 18px; letter-spacing: 6px; color: #fff; font-weight: 600; }
+  .ghead .en { font-size: 11px; letter-spacing: 3px; color: rgba(232,237,245,.4); margin-left: 14px; }
+  .ghead .line { flex: 1; height: 1px; margin-left: 18px; background: linear-gradient(90deg, rgba(255,255,255,.18), transparent); }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
+  .card {
+    position: relative; display: block; text-decoration: none; color: #e8edf5;
+    background: rgba(255,255,255,.045);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 18px;
+    padding: 30px 28px 26px;
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease, background .25s ease;
+  }
+  .card::before {
+    content: ""; position: absolute; top: 0; left: 22px; right: 22px; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,229,255,.7), transparent);
+    opacity: 0; transition: opacity .25s ease;
+  }
+  .card:hover { transform: translateY(-6px); border-color: rgba(0,229,255,.45); box-shadow: 0 12px 40px rgba(0,229,255,.12), 0 0 60px rgba(124,92,255,.10); background: rgba(255,255,255,.07); }
+  .card:hover::before { opacity: 1; }
+  .mono {
+    width: 46px; height: 46px; border-radius: 12px;
+    background: linear-gradient(135deg, rgba(0,229,255,.9), rgba(124,92,255,.9));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 17px; color: #04070d;
+    box-shadow: 0 0 18px rgba(0,229,255,.25);
+    margin-bottom: 18px;
+  }
+  .card h3 { font-size: 20px; font-weight: 600; letter-spacing: 1px; color: #fff; }
+  .card p { margin-top: 10px; font-size: 13px; line-height: 1.8; color: rgba(232,237,245,.55); }
+  .card .go { display: inline-block; margin-top: 18px; font-size: 13px; letter-spacing: 2px; color: #7ee8ff; }
+  .card .go::after { content: " →"; color: #00e5ff; }
+
+  /* 页脚 */
+  footer { text-align: center; padding: 60px 0 46px; }
+  .quote { font-size: 15px; letter-spacing: 2px; color: rgba(232,237,245,.75); line-height: 2; }
+  .quote b { background: linear-gradient(90deg,#00e5ff,#7c5cff); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }
+  .foot-line { margin: 22px auto 0; width: 40px; height: 1px; background: rgba(255,255,255,.25); }
+  .copy { margin-top: 14px; font-size: 11px; letter-spacing: 3px; color: rgba(232,237,245,.35); }
+
+  @media (max-width: 640px) {
+    .hero { padding: 46px 0 18px; }
+    .title { letter-spacing: 4px; }
+    .cards { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
-<div class="topbar"></div>
-<div class="shell">
-  <aside class="side">
-    <div class="dia"><span>JH</span></div>
-    <h2 class="who">JASONHUANG</h2>
-    <div class="who-sub">TOOL MAKER</div>
-    <div class="rule"></div>
-    <p class="q">工具在手，边界在后。<br/>每多一种工具，<br/>你就<b>多一分自由</b>。</p>
-  </aside>
+<div class="space"></div>
+<div class="stars"></div>
 
-  <main class="main">
-    <div class="marks">
-      <span class="sq"></span><span class="cir"></span><span class="tri"></span><span class="cross"></span>
-      <span class="kick">JASONHUANG&rsquo;S TOOLKIT / 2026</span>
+<div class="wrap">
+  <header class="nav">
+    <div class="brand">
+      <span class="orb">JH</span>
+      <span class="wordmark">JASONHUANG</span>
     </div>
-    <h1 class="title">工<span class="a">具</span>集</h1>
-    <span class="badge">JasonHuang 出品</span>
+    <span class="pill">JasonHuang 出品</span>
+  </header>
 
-    <section class="group">
-      <div class="ghead"><span class="num">01</span>英语<span class="en">ENGLISH</span></div>
-      <div class="blocks">
-        <a class="block" href="https://dictionary-gpt.pages.dev" target="_blank" rel="noopener">
-          <span class="tag">A</span>
-          <h3>在线词典</h3>
-          <p>76 万词条 / 音标 / 词性 / 考试标签 / 词形变化，浏览器本地快速搜索</p>
-          <span class="go">打开工具 <em>→</em></span>
-        </a>
-        <a class="block" href="https://english-learning-456.pages.dev" target="_blank" rel="noopener">
-          <span class="tag">B</span>
-          <h3>英语学习</h3>
-          <p>语法 / 好句与作文模板 / 背诵 + 应用</p>
-          <span class="go">打开工具 <em>→</em></span>
-        </a>
-      </div>
-    </section>
+  <section class="hero">
+    <div class="kicker">JasonHuang&rsquo;s Toolkit</div>
+    <h1 class="title">工具<em>集</em></h1>
+    <p class="tagline">工具在手，边界在后。每多一种工具，<b>你就多一分自由</b>。</p>
+    <div class="divider"></div>
+  </section>
 
-    <section class="group">
-      <div class="ghead"><span class="num">02</span>数学<span class="en">MATH</span></div>
-      <div class="blocks">
-        <a class="block" href="https://math-visualizer.pages.dev" target="_blank" rel="noopener">
-          <span class="tag">C</span>
-          <h3>数学可视化</h3>
-          <p>线性代数 / 微积分可视化：矩阵、特征向量、傅里叶、泰勒、积分</p>
-          <span class="go">打开工具 <em>→</em></span>
-        </a>
-      </div>
-    </section>
+  <section class="group">
+    <div class="ghead"><span class="num">01</span><h2>英语</h2><span class="en">ENGLISH</span><span class="line"></span></div>
+    <div class="cards">
+      <a class="card" href="https://dictionary-gpt.pages.dev" target="_blank" rel="noopener">
+        <span class="mono">A</span>
+        <h3>在线词典</h3>
+        <p>76 万词条 / 音标 / 词性 / 考试标签 / 词形变化，浏览器本地快速搜索</p>
+        <span class="go">进入工具</span>
+      </a>
+      <a class="card" href="https://english-learning-456.pages.dev" target="_blank" rel="noopener">
+        <span class="mono">B</span>
+        <h3>英语学习</h3>
+        <p>语法 / 好句与作文模板 / 背诵 + 应用</p>
+        <span class="go">进入工具</span>
+      </a>
+    </div>
+  </section>
 
-    <footer class="foot">
-      <span>JASONHUANG TOOLS</span>
-      <span>TOOLS IN HAND, BOUNDARY BEHIND</span>
-    </footer>
-  </main>
+  <section class="group">
+    <div class="ghead"><span class="num">02</span><h2>数学</h2><span class="en">MATH</span><span class="line"></span></div>
+    <div class="cards">
+      <a class="card" href="https://math-visualizer.pages.dev" target="_blank" rel="noopener">
+        <span class="mono">C</span>
+        <h3>数学可视化</h3>
+        <p>线性代数 / 微积分可视化：矩阵、特征向量、傅里叶、泰勒、积分</p>
+        <span class="go">进入工具</span>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <p class="quote">工具在手，边界在后。<br/>每多一种工具，<b>你就多一分自由</b>。</p>
+    <div class="foot-line"></div>
+    <p class="copy">JASONHUANG TOOLS &middot; TOOLS IN HAND, BOUNDARY BEHIND</p>
+  </footer>
 </div>
 </body>
 </html>
-
-
