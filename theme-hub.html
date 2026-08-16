@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>theme hub</title></head>
+<body style="display:none">
+<script>
+(function(){
+  var KEY='jht_theme';
+  var listeners=[];
+  function read(){ try{ return localStorage.getItem(KEY)||''; }catch(e){ return ''; } }
+  function write(t){ try{ localStorage.setItem(KEY,t); }catch(e){} }
+  window.addEventListener('message',function(ev){
+    var d=ev.data||{};
+    if(d.type==='register'){ if(listeners.indexOf(ev.source)<0) listeners.push(ev.source); try{ ev.source.postMessage({type:'theme',value:read()},'*'); }catch(e){} }
+    if(d.type==='get-theme'){ try{ ev.source.postMessage({type:'theme',value:read()},'*'); }catch(e){} }
+    if(d.type==='set-theme'){
+      write(d.value);
+      for(var i=0;i<listeners.length;i++){ try{ listeners[i].postMessage({type:'theme',value:d.value},'*'); }catch(e){} }
+    }
+  });
+})();
+</script>
+</body>
+</html>
